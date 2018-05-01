@@ -35,6 +35,8 @@ from tester import dump_classifier_and_data
 ### features_list is a list of strings, each of which is a feature name.
 ### The first feature must be "poi".
 #features_list = ['poi','salary'] # You will need to use more features
+### features_list is a list of strings, each of which is a feature name.
+### The first feature must be "poi" since it is the target.
 features_list = ['poi',
                 'bonus',
                 'deferral_payments',
@@ -260,42 +262,9 @@ print "total number of data points", len(data_dict)
 count_poi = pd.value_counts(df['poi'], sort = True).sort_index()
 print "number of poi:\n",count_poi
 
+## Percentage of POI:
+print "Percentage of POI ",100*18./144,"%"
 df.hist(figsize=(20,15),bins=50)
-
-print "\ndata description:\n",df.describe()
-
-# Missing values
-print "\ninfo:\n",df.info()
-
-
-
-# Percentage of NaN values in data frame
-def PercentNaN(df,feature):
-    f_NaN = df[feature].isnull().sum()*100.0/df.shape[0]
-    print "% of NaN values for ",feature,"{0:.2f}".format(f_NaN)
-    return f_NaN
-
-bonus_NaN = PercentNaN(df,'bonus')
-poi_NaN = PercentNaN(df,'poi')
-deferral_payments_NaN = PercentNaN(df,'deferral_payments')
-deferred_income_NaN = PercentNaN(df,'deferred_income')
-director_fees_NaN = PercentNaN(df,'director_fees')
-exercised_stock_options_NaN = PercentNaN(df,'exercised_stock_options')
-expenses_NaN = PercentNaN(df,'expenses')
-loan_advances_NaN = PercentNaN(df,'loan_advances')
-long_term_incentive_NaN = PercentNaN(df,'long_term_incentive')
-other_NaN = PercentNaN(df,'other')
-restricted_stock_NaN = PercentNaN(df,'restricted_stock')
-restricted_stock_deferred_NaN = PercentNaN(df,'restricted_stock_deferred')
-salary_NaN = PercentNaN(df,'salary')
-total_payments_NaN = PercentNaN(df,'total_payments')
-total_stock_value_NaN = PercentNaN(df,'total_stock_value')
-from_messages_NaN = PercentNaN(df,'from_messages')
-from_poi_to_this_person_NaN = PercentNaN(df,'from_poi_to_this_person')
-from_this_person_to_poi_NaN = PercentNaN(df,'from_this_person_to_poi')
-shared_receipt_with_poi_NaN = PercentNaN(df,'shared_receipt_with_poi')
-to_messages_NaN = PercentNaN(df,'to_messages')
-
 
 ### Task 3: Create new feature(s)
 
@@ -332,12 +301,45 @@ sns.jointplot(x="perc_from_poi", y="perc_to_poi", data=df)
 plt.savefig('perc_from_poiVSperc_to_poi.png')
 plt.show()
 
+# Missing values
+print "\ninfo:\n",df.info()
 
+# Percentage of NaN values in data frame
+def PercentNaN(df,feature):
+    f_NaN = df[feature].isnull().sum()*100.0/df.shape[0]
+    print "% of NaN values for ",feature,"{0:.2f}".format(f_NaN)
+    return f_NaN
 
+bonus_NaN = PercentNaN(df,'bonus')
+poi_NaN = PercentNaN(df,'poi')
+deferral_payments_NaN = PercentNaN(df,'deferral_payments')
+deferred_income_NaN = PercentNaN(df,'deferred_income')
+director_fees_NaN = PercentNaN(df,'director_fees')
+exercised_stock_options_NaN = PercentNaN(df,'exercised_stock_options')
+expenses_NaN = PercentNaN(df,'expenses')
+loan_advances_NaN = PercentNaN(df,'loan_advances')
+long_term_incentive_NaN = PercentNaN(df,'long_term_incentive')
+other_NaN = PercentNaN(df,'other')
+restricted_stock_NaN = PercentNaN(df,'restricted_stock')
+restricted_stock_deferred_NaN = PercentNaN(df,'restricted_stock_deferred')
+salary_NaN = PercentNaN(df,'salary')
+total_payments_NaN = PercentNaN(df,'total_payments')
+total_stock_value_NaN = PercentNaN(df,'total_stock_value')
+from_messages_NaN = PercentNaN(df,'from_messages')
+from_poi_to_this_person_NaN = PercentNaN(df,'from_poi_to_this_person')
+from_this_person_to_poi_NaN = PercentNaN(df,'from_this_person_to_poi')
+shared_receipt_with_poi_NaN = PercentNaN(df,'shared_receipt_with_poi')
+to_messages_NaN = PercentNaN(df,'to_messages')
 perc_from_poi_NaN = PercentNaN(df,'perc_from_poi')
 perc_to_poi_NaN = PercentNaN(df,'perc_to_poi')
 
+# Missing values : do not include these features
+df.drop("loan_advances", axis=1,inplace=True)
+df.drop("restricted_stock_deferred",axis=1,inplace=True)
+df.drop("director_fees",axis=1,inplace=True)
+df.drop("deferral_payments",axis=1,inplace=True) 
 
+df.columns.values
 
 # heatmap
 # Plot the Pearson's Correlation Diagram: 
@@ -367,49 +369,31 @@ sns.heatmap(df2.astype(float).corr(),linewidths=0.1,vmax=1.0, square=True,
 plt.savefig('PearsonCorrelationOfFeatures.png')
 plt.show()
 
-# comprenhensive list - 24 features: actual 23 since poi is the target
-'''
-features_list = ['poi',
-                'bonus',
-                'deferral_payments',
-                'deferred_income',
-                'director_fees',
-                'exercised_stock_options',
-                'expenses',
-                'loan_advances',
-                'long_term_incentive',
-                'other',
-                'restricted_stock',
-                'restricted_stock_deferred',
-                'salary',
-                'total_payments',
-                'total_stock_value',
-                'from_messages',
-                'from_poi_to_this_person',
-                'from_this_person_to_poi',
-                'shared_receipt_with_poi',
-                'to_messages',
-                'perc_from_poi',
-                'perc_to_poi',
-                'perc_bonus',
-                'perc_salary']
-'''
-# select best features and getting rid of correlated features: 13 in total
-features_list = ['poi',
-                'exercised_stock_options',
-                'bonus',
-                'salary',
-                'perc_to_poi',
-                'deferred_income',
-                'long_term_incentive',
-                'total_payments',
-                'shared_receipt_with_poi',
-                'expenses',
-                'from_poi_to_this_person',
-                'perc_from_poi',
-                'from_this_person_to_poi',
-                'from_messages']
+print "\ndata description:\n",df.describe()
 
+# to make this notebook's output identical at every run
+import numpy as np
+np.random.seed(42)
+
+# 17 features in total
+features_list = ['poi',
+                 'bonus',
+                 'deferred_income',
+                 'exercised_stock_options',
+                 'expenses',
+                 'long_term_incentive',
+                 'other',
+                 'restricted_stock',
+                 'salary',
+                 'total_payments',
+                 'total_stock_value',
+                 'from_messages',
+                 'from_poi_to_this_person',
+                 'from_this_person_to_poi',
+                 'shared_receipt_with_poi',
+                 'to_messages',
+                 'perc_from_poi',
+                 'perc_to_poi']
 
 
 ### Store to my_dataset for easy export below.
@@ -434,8 +418,7 @@ corr_matrix["poi"].sort_values(ascending=False)
 
 # Prepare the data for Machine Learning algorithms
 # Select features
-import numpy as np
-
+### Selection of features and use of SelectKBest
 from sklearn.feature_selection import SelectKBest
 
 def Select_k_best(data_dict, features_list, k):
@@ -468,6 +451,55 @@ plt.ylabel('Importance Score')
 plt.savefig('FeatureImportance.png')
 plt.show()
 
+# select best features from kbest
+features_list = ['poi',
+                'exercised_stock_options',
+                'total_stock_value',
+                'bonus',
+                'salary',
+                'perc_to_poi',
+                'deferred_income',
+                'long_term_incentive',
+                'restricted_stock',
+                'total_payments',
+                'shared_receipt_with_poi',
+                'expenses',
+                'from_poi_to_this_person',
+                'other',
+                'perc_from_poi',
+                'from_this_person_to_poi',
+                'to_messages',
+                'from_messages']
+
+# select best features and getting rid of correlated features: 13 are remaining in total
+features_list = ['poi',
+                'exercised_stock_options',
+                'bonus',
+                'salary',
+                'perc_to_poi',
+                'deferred_income',
+                'long_term_incentive',
+                'total_payments',
+                'shared_receipt_with_poi',
+                'expenses',
+                'from_poi_to_this_person',
+                'perc_from_poi',
+                'from_this_person_to_poi',
+                'from_messages']
+
+### Store to my_dataset for easy export below.
+my_dataset = data_dict
+
+### Extract features and labels from dataset for local testing
+data = featureFormat(my_dataset, features_list, sort_keys = True)
+labels, features = targetFeatureSplit(data)
+
+### split data into training and testing datasets
+features_train, features_test, labels_train, labels_test = cross_validation.train_test_split(features, labels, test_size=0.1, random_state=42)
+
+print("Number train dataset: ", len(features_train))
+print("Number test dataset: ", len(features_test))
+print("Total number: ", len(features_train)+len(features_test))
 
 ### Task 4: Try a varity of classifiers
 ### Please name your classifier clf for easy export below.
@@ -481,23 +513,22 @@ from tester import test_classifier
 
 ### trial with Naive Bayes for prediction
 from sklearn.naive_bayes import GaussianNB
-'''
+
 nb_clf = GaussianNB()
 nb_clf.fit(features_train, labels_train)
+
 test_classifier(nb_clf, my_dataset, features_list)
-'''
+
 ### trial with Decision Tree for prediction
 from sklearn.tree import DecisionTreeClassifier
-from sklearn import tree
-'''
+
 DTree_clf = DecisionTreeClassifier(random_state=42)
 DTree_clf.fit(features_train,labels_train)
-test_classifier(DTree_clf, my_dataset, features_list)
 
+test_classifier(DTree_clf, my_dataset, features_list)
 print "Feature importances:",DTree_clf.feature_importances_
 print "The number of classes ",DTree_clf.n_classes_
-
- 
+from sklearn import tree 
 dot_data = tree.export_graphviz(DTree_clf,
                                 feature_names=features_list[1:],
                                 class_names=True,
@@ -509,28 +540,28 @@ dot_data = tree.export_graphviz(DTree_clf,
 # >activate DAND
 # >cd "~/final_project" # where the tree.dot is located
 # >dot -Tpng tree.dot -o DecisionTree01.png
-'''
+
 ### trial with Random Forest for prediction
 from sklearn.ensemble import RandomForestClassifier
-'''
+
 RF_clf = RandomForestClassifier(criterion='entropy',max_features=1,
                              random_state=42)
 RF_clf.fit(features_train, labels_train)
+
 test_classifier(RF_clf, my_dataset, features_list)
 
 print "Feature importances:",RF_clf.feature_importances_
-'''
+
 ### trial with AdaBoost model for prediction
 from sklearn.ensemble import AdaBoostClassifier
-'''
 depth = 10
 aboost_clf = AdaBoostClassifier(DecisionTreeClassifier(max_depth=depth),
                          algorithm="SAMME")    
 aboost_clf.fit(features_train,labels_train)
-test_classifier(aboost_clf, my_dataset, features_list)
 
+test_classifier(aboost_clf, my_dataset, features_list)
 print "Feature importances:",aboost_clf.feature_importances_
-'''
+
 ### Task 5: Tune your classifier to achieve better than .3 precision and recall 
 ### using our testing script. Check the tester.py script in the final project
 ### folder for details on the evaluation method, especially the test_classifier
@@ -539,23 +570,29 @@ print "Feature importances:",aboost_clf.feature_importances_
 ### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
 
 ### Tuning NaiveBayes Model
-# Reducing the number of features. It is good since we are probably overfitting
-# scores to beat: 
-#Accuracy: 0.83993	Precision: 0.37073	Recall: 0.28750	F1: 0.32385
+# There is no parameters for Naive Bayes except playing with the number of features. 
+# scores to beat: Accuracy: 0.83993	Precision: 0.37073	Recall: 0.28750	F1: 0.32385	F2: 0.30102
 
-# select One feature only
+# Tuning: 
+# select One feature only: better performance when reducing the number of features
 features_list = ['poi','exercised_stock_options']
 
+### Naive Bayes for prediction
 nb_clf = GaussianNB()
 nb_clf.fit(features_train, labels_train)
+
+## Evaluation on the final model
 test_classifier(nb_clf, my_dataset, features_list)
+
 
 ### Tuning DecisionTreeClassifier
 # Feature importances: [ 0.06620183,0.,0.04767267,0.17102017,0.05720721,0.02026089,0.06674174,
 #0.2240468,0.21336521,0.08581081,0.,0.04767267,0.] from previous run of Decision Tree
 # scores to beat: Accuracy: 0.81713	Precision: 0.30701	Recall: 0.29550	F1: 0.30115	F2: 0.29773
 
+# Tuning:
 # select the 9 most important features from last run of DecisionTreeClassifier
+# Use of feature importances
 features_list = ['poi',
                 'exercised_stock_options',
                 'salary',
@@ -569,29 +606,30 @@ features_list = ['poi',
 
 from sklearn.model_selection import GridSearchCV
 
+# Tuning with the following hyperparameters: 
+# criterion, max_depth, min_samples_split, max_features 
 param_grid = {'criterion': ["entropy"],
               'max_depth':[2,5,10],
               'min_samples_split':[2,3,4,5],
               'max_features': [1,2,3,4,5,6,7,8,9],
               'random_state':[42]}
 DTree_clf = DecisionTreeClassifier()
-grid_search = GridSearchCV(DTree_clf, 
-                           param_grid, 
-                           cv=10, 
-                           verbose=3, 
-                           n_jobs=1,
-                           scoring='f1')
+#  F1 as scoring since the recall and the precision are equally important.
+grid_search = GridSearchCV(DTree_clf, param_grid, cv=10, verbose=1, n_jobs=1,scoring='f1')
 grid_search.fit(features_train, labels_train)
 
+# Best hyperparameters
 grid_search.best_params_
+
+# Best Estimator
+DTree_clf = grid_search.best_estimator_
+
 grid_search.best_score_
 
-DTree_clf = DecisionTreeClassifier(criterion='entropy',
-                                   max_features=8,
-                                   max_depth=2,
-                                   min_samples_split=2,
-                                   random_state=42)
+# reuse of best estimator
+DTree_clf.fit(features_train, labels_train)
 
+## Evaluation on the final model
 test_classifier(DTree_clf, my_dataset, features_list)
 
 print "Feature importances:",DTree_clf.feature_importances_
@@ -603,6 +641,7 @@ dot_data = tree.export_graphviz(DTree_clf,
                                 label='all',
                                 filled=True, rounded=True,
                                 out_file="tree2.dot")
+
 # Use commands to generate image file DecisionTree02.png 
 # >activate DAND
 # >cd "~/final_project" # where the tree2.dot is located
@@ -611,54 +650,57 @@ dot_data = tree.export_graphviz(DTree_clf,
 ## Tuning RandomForestClassifier
 
 # Accuracy to beat: Accuracy: 0.86247	Precision: 0.43907	Recall: 0.11350	F1: 0.18037	F2: 0.13326
+
 '''
 Feature importances from the previous run of Random Forest: 
-[ 0.11512042  0.12654951  0.04781864  0.11626416  0.02970286  0.06013323
-  0.1309309   0.04608152  0.15027599  0.07050706  0.03845646  0.02532139  0.04283785]
+[ 0.16600026  0.06917332  0.07329676  0.14227899  0.0484351   0.10840532
+  0.09809793  0.04676382  0.08431206  0.03344624  0.05901818  0.02555952
+  0.04521251]
 '''
+# Tuning: 
 # Select the most important features from last run of Random Forest
-# and reducing the number of features from 9 to 2
+# reducing the number of features from 9 to 2 since the performance was not sifficient
+# selecting feature 'bonus' instead of 'perc_to_poi' for better performance 
 features_list = ['poi',
                 'exercised_stock_options',
                 'bonus']
 
+# Tuning with the following hyperparameters: 
+# criterion, n_estimators, max_depth, max_features 
 param_grid = {'criterion': ["gini", "entropy"],
               'n_estimators':[2,3,4,5],
               'max_depth':[None,5,10,15],
               'max_features': [None,1,2],
               'random_state':[42]}
 RF_clf = RandomForestClassifier()
-grid_search = GridSearchCV(RF_clf, 
-                           param_grid, 
-                           cv=10, 
-                           verbose=3, 
-                           n_jobs=1,
-                           scoring='f1')
-
+#  F1 as scoring since the recall and the precision are equally important.
+grid_search = GridSearchCV(RF_clf, param_grid, cv=10, verbose=1, n_jobs=1,scoring='f1')
 grid_search.fit(features_train, labels_train)
 
+
+# Best hyperparameters
 grid_search.best_params_
+
+# Best estimator
+RF_clf = grid_search.best_estimator_
 
 grid_search.best_score_
 
-RF_clf = RandomForestClassifier(criterion='gini',
-                                max_depth=None, 
-                                max_features=None, 
-                                n_estimators=3,
-                                random_state=42)
-
+# Reuse of the best estimator
 RF_clf.fit(features_train, labels_train)
+
+## Evaluation on the final model
 test_classifier(RF_clf, my_dataset, features_list)
 
-print "Feature importances:",RF_clf.feature_importances_
-
 ### Tuning Adaboost Model
-# scores to beat: Accuracy: 0.81860	Precision: 0.31195	Recall: 0.29900	F1: 0.30534	F2: 0.30150 
+# The scores to beat from last run of Adaboost model: Accuracy: 0.81860	Precision: 0.31195	Recall: 0.29900	F1: 0.30534	F2: 0.30150 
+
 '''
 Feature importances from previous run of Adaboost: 
-[ 0.06620183 , 0., 0., 0.17102017, 0., 0.1060717, 
-0.16208709, 0.2240468, 0.21336521, 0., 0., 0.05720721, 0.]
+
+[ 0.06620183 , 0., 0., 0.17102017, 0., 0.1060717, 0.16208709, 0.2240468, 0.21336521, 0., 0., 0.05720721, 0.]
 '''
+# Tuning:
 # select best features and using feature importance from last run of Adaboost 
 features_list = ['poi',
                 'exercised_stock_options',
@@ -669,32 +711,28 @@ features_list = ['poi',
                 'expenses',
                 'from_this_person_to_poi']
 
+# Tuning with the following hyperparameters: 
+# n_estimators, algorithm, learning_rage 
 param_grid = {'n_estimators':[2,3,4,5,10],
               'algorithm':['SAMME'],
               'learning_rate':[0.5,1,2],
               'random_state':[42]}
 Aboost_clf = AdaBoostClassifier()
-grid_search = GridSearchCV(Aboost_clf, 
-                           param_grid, 
-                           cv=10, 
-                           verbose=3, 
-                           n_jobs=1,
-                           scoring='f1')
-
+#  F1 as scoring since the recall and the precision are equally important.
+grid_search = GridSearchCV(Aboost_clf, param_grid, cv=10, verbose=1, n_jobs=1,scoring='f1')
 grid_search.fit(features_train, labels_train)
 
+# Best hyperparameters 
 grid_search.best_params_
 
-clf = AdaBoostClassifier(algorithm="SAMME",
-                         learning_rate=1,
-                         n_estimators=3,
-                         random_state=42)    
+# Best estimator
+clf = grid_search.best_estimator_
 
+# reuse of the best estimator
 clf.fit(features_train,labels_train)
 
+## Evaluation on the final model
 test_classifier(clf, my_dataset, features_list)
-
-print "Feature importances:",clf.feature_importances_
 
 # Example starting point. Try investigating other evaluation techniques!
 from sklearn.cross_validation import train_test_split
