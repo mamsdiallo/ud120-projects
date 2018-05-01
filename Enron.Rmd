@@ -1,0 +1,128 @@
+---
+title: "Enron"
+author: "Mamadou Diallo"
+date: "24 avril 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r packages, echo = FALSE, message = FALSE, warning = FALSE}
+library(dplyr) # data handling
+library(ggplot2) # visualization
+library(GGally) # TBD
+library(scales) # TBD
+library(memisc) # TBD
+library(reshape2) # TBD
+library(RColorBrewer) # TBD
+library(corrplot) # heatmap
+library(caTools) # Sampling 
+library(rpart) # Decision tree
+library(rpart.plot) # plot decision tree
+library(caret)
+library(e1071)
+library(Hmisc) # Histograms
+library(gridExtra) # plot multiple plots in one graph
+library(ROCR) # ROC curves
+```
+
+#### Dataset:
+TBD.
+
+#### Guiding question:
+Which financial or email properties influence the poi?
+
+```{r Load_the_Data, echo = FALSE}
+# Load the data
+enron <- read.csv("Enron.csv",sep = ";")
+# store it in data frame
+df <- tbl_df(enron)
+# List all column names
+names(df)
+
+```
+
+```{r data summary,echo = FALSE}
+# Analyse data
+str(df)
+# Data Summary
+summary(df)
+```
+
+```{r split into train and test data,echo = FALSE}
+set.seed(42)
+msk <- sample.split(df$poi, SplitRatio = 0.1)
+train <- subset(df, msk == T)
+test <- subset(df, msk == F)
+```
+
+```{r train table, echo = FALSE}
+table(train$poi)
+# size of the training dataset
+dim(train)
+```
+
+```{r train table, echo = FALSE}
+table(test$poi)
+# size of the training dataset
+dim(test)
+```
+
+```{r check ratio, echo = FALSE}
+2 / (2 + 13)
+16 / (16 + 113)
+```
+
+
+```{r}
+#Correlation Heatmap of Variables
+corrplot(cor(df),title = "Heatmap")
+```
+
+```{r Histograms of each continuous features for the global dataset, echo = FALSE}
+hist.data.frame(df[, 1:16],mtitl = "Histograms of each continuous features")
+```
+
+```{r r Discretizing continuous features, echo = FALSE}
+discreteContFeature <- function(featureTable,featureName, start = 0.01) {
+  # compute quantiles
+  q <- quantile(featureTable,seq(0, 1, by = 0.1),na.rm = TRUE)
+  # the 2 wines belong to the first interval: make them part of the first interval  
+  q[1] = q[1] - start
+  #print(table(featureTable))
+  # create intervals open to the left and closed to the right
+  qvar <- cut(featureTable, q)
+  tab <- table(qvar, df$poi)
+  # ploting the bar plot
+  t1 = prop.table(tab, 1)[, 2]
+  print(x = t1)
+  names(t1) = c("NOK", "OK")
+  p = barplot(t(t1),las = 3, main = featureName, ylab = "rate of person of interest", density = 0)
+  # plot average wine quality
+  abline(h = 0.1357, lty = 2)
+
+  #return(prop.table(tab,1))
+  return("Plot done")
+}
+```
+
+
+```{r Discretize features, echo = FALSE}
+discreteContFeature(df$exercised_stock_options, "exercised_stock_options", 0.01)
+discreteContFeature(df$total_stock_value, "total_stock_value", 0.01)
+discreteContFeature(df$total_stock_value, "total_stock_value", 0.01)
+discreteContFeature(df$bonus, "bonus", 0.01)
+#discreteContFeature(df$perc_bonus, "perc_bonus", 0.01)
+discreteContFeature(df$salary, "salary", 0.01)
+#discreteContFeature(df$perc_to_poi, "perc_to_poi", 0.01)
+discreteContFeature(df$deferred_income,"deferred_income", 0.01)
+discreteContFeature(df$long_term_incentive, "long_term_incentive", 0.01)
+discreteContFeature(df$total_payments, "total_payments", 0.01)
+discreteContFeature(df$restricted_stock, "restricted_stock", 0.01)
+discreteContFeature(df$shared_receipt_with_poi, "shared_receipt_with_poi", 0.01)
+discreteContFeature(df$loan_advances, "loan_advances", 0.01)
+discreteContFeature(df$expenses, "expenses", 0.01)
+discreteContFeature(df$from_poi_to_this_person, "from_poi_to_this_person", 0.01)
+```
