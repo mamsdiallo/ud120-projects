@@ -6,6 +6,10 @@ sys.path.append("../tools/")
 
 from feature_format import featureFormat, targetFeatureSplit
 from tester import dump_classifier_and_data
+from plot_poi import plot_heatmap
+from select_features import Select_k_best
+from plot_poi import plot_kbest
+from explore import get_incompletes, display_examples,build_df,display_NaN
 
 ### Task 1: Select what features you'll use.
 # List of features
@@ -70,25 +74,10 @@ print "total number of data points", len(data_dict)
 
 ### Task 2: Remove outliers
 
-def get_incompletes(dataset, threshold):
-    """
-    Returns an array of person names that have no information (NaN) in a
-    percentage of features above a given threshold (between 0 and 1).
-    """
-    incompletes = []
-    for person in dataset:
-        n = 0
-        for key, value in dataset[person].iteritems():
-            if value == 'NaN' or value == 0:
-                n += 1
-        fraction = float(n) / float(21)
-        if fraction > threshold:
-            incompletes.append(person)
-
-    return incompletes
-
 # Get the list of persons with more than 90% incomplete information
-print "\n incompletes:\n",get_incompletes(data_dict,0.9)
+print "\n incompletes more than 90% incomplete information:\n",get_incompletes(data_dict,0.9)
+
+display_examples(data_dict)
 
 data = featureFormat(data_dict, features_list)
 import re 
@@ -177,76 +166,6 @@ plt.style.use('classic')
 import pandas as pd
 
 # build function data frame:
-def build_df(data_dict):
-    name = [key for key in data_dict.keys()]
-    poi = [data_dict[key]['poi'] for key in data_dict.keys()]
-    bonus = [data_dict[key]['bonus'] for key in data_dict.keys()]
-    deferral_payments = [data_dict[key]['deferral_payments'] for key in data_dict.keys()]
-    deferred_income = [data_dict[key]['deferred_income'] for key in data_dict.keys()]
-    director_fees = [data_dict[key]['director_fees'] for key in data_dict.keys()]
-    exercised_stock_options = [data_dict[key]['exercised_stock_options'] for key in data_dict.keys()]
-    expenses = [data_dict[key]['expenses'] for key in data_dict.keys()]
-    loan_advances = [data_dict[key]['loan_advances'] for key in data_dict.keys()]
-    long_term_incentive = [data_dict[key]['long_term_incentive'] for key in data_dict.keys()]
-    other = [data_dict[key]['other'] for key in data_dict.keys()]
-    restricted_stock = [data_dict[key]['restricted_stock'] for key in data_dict.keys()]
-    restricted_stock_deferred = [data_dict[key]['restricted_stock_deferred'] for key in data_dict.keys()]
-    salary = [data_dict[key]['salary'] for key in data_dict.keys()]
-    total_payments = [data_dict[key]['total_payments'] for key in data_dict.keys()]
-    total_stock_value = [data_dict[key]['total_stock_value'] for key in data_dict.keys()]
-    from_messages = [data_dict[key]['from_messages'] for key in data_dict.keys()]
-    from_poi_to_this_person = [data_dict[key]['from_poi_to_this_person'] for key in data_dict.keys()]
-    from_this_person_to_poi = [data_dict[key]['from_this_person_to_poi'] for key in data_dict.keys()]
-    shared_receipt_with_poi = [data_dict[key]['shared_receipt_with_poi'] for key in data_dict.keys()]
-    to_messages  = [data_dict[key]['to_messages'] for key in data_dict.keys()]
-    
-    values = [('name',name),
-              ('poi',poi),
-              ('bonus',bonus),
-              ('deferral_payments',deferral_payments),
-              ('deferred_income',deferred_income),          
-              ('director_fees',director_fees),
-              ('exercised_stock_options',exercised_stock_options),
-              ('expenses',expenses),
-              ('loan_advances',loan_advances),
-              ('long_term_incentive',long_term_incentive),
-              ('other',other),
-              ('restricted_stock',restricted_stock),
-              ('restricted_stock_deferred',restricted_stock_deferred),
-              ('salary',salary),
-              ('total_payments',total_payments),
-              ('total_stock_value',total_stock_value),
-              ('from_messages',from_messages),
-              ('from_poi_to_this_person',from_poi_to_this_person),
-              ('from_this_person_to_poi',from_this_person_to_poi),
-              ('shared_receipt_with_poi',shared_receipt_with_poi),
-              ('to_messages',to_messages)]
-
-    df = pd.DataFrame.from_items(values)
-    df.bonus = pd.to_numeric(df.bonus, errors='coerce')
-    df.poi = pd.to_numeric(df.poi, errors='coerce')
-    df.deferral_payments = pd.to_numeric(df.deferral_payments, errors='coerce')
-    df.deferred_income = pd.to_numeric(df.deferred_income, errors='coerce')
-    df.director_fees = pd.to_numeric(df.director_fees, errors='coerce')
-    df.exercised_stock_options = pd.to_numeric(df.exercised_stock_options, errors='coerce')
-    df.expenses = pd.to_numeric(df.expenses, errors='coerce')
-    df.loan_advances = pd.to_numeric(df.loan_advances, errors='coerce')
-    df.long_term_incentive = pd.to_numeric(df.long_term_incentive, errors='coerce')
-    df.other = pd.to_numeric(df.other, errors='coerce')
-    df.restricted_stock = pd.to_numeric(df.restricted_stock, errors='coerce')
-    df.restricted_stock_deferred = pd.to_numeric(df.restricted_stock_deferred, errors='coerce')
-    df.salary = pd.to_numeric(df.salary, errors='coerce')
-    df.total_payments = pd.to_numeric(df.total_payments, errors='coerce')
-    df.total_stock_value = pd.to_numeric(df.total_stock_value, errors='coerce')
-    df.from_messages = pd.to_numeric(df.from_messages, errors='coerce')
-    df.from_poi_to_this_person = pd.to_numeric(df.from_poi_to_this_person, errors='coerce')
-    df.from_this_person_to_poi = pd.to_numeric(df.from_this_person_to_poi, errors='coerce')
-    df.shared_receipt_with_poi = pd.to_numeric(df.shared_receipt_with_poi, errors='coerce')
-    df.to_messages = pd.to_numeric(df.to_messages, errors='coerce')
-    
-    return df
-
-
 df = build_df(data_dict)
 
 # display columns
@@ -305,33 +224,7 @@ plt.show()
 print "\ninfo:\n",df.info()
 
 # Percentage of NaN values in data frame
-def PercentNaN(df,feature):
-    f_NaN = df[feature].isnull().sum()*100.0/df.shape[0]
-    print "% of NaN values for ",feature,"{0:.2f}".format(f_NaN)
-    return f_NaN
-
-bonus_NaN = PercentNaN(df,'bonus')
-poi_NaN = PercentNaN(df,'poi')
-deferral_payments_NaN = PercentNaN(df,'deferral_payments')
-deferred_income_NaN = PercentNaN(df,'deferred_income')
-director_fees_NaN = PercentNaN(df,'director_fees')
-exercised_stock_options_NaN = PercentNaN(df,'exercised_stock_options')
-expenses_NaN = PercentNaN(df,'expenses')
-loan_advances_NaN = PercentNaN(df,'loan_advances')
-long_term_incentive_NaN = PercentNaN(df,'long_term_incentive')
-other_NaN = PercentNaN(df,'other')
-restricted_stock_NaN = PercentNaN(df,'restricted_stock')
-restricted_stock_deferred_NaN = PercentNaN(df,'restricted_stock_deferred')
-salary_NaN = PercentNaN(df,'salary')
-total_payments_NaN = PercentNaN(df,'total_payments')
-total_stock_value_NaN = PercentNaN(df,'total_stock_value')
-from_messages_NaN = PercentNaN(df,'from_messages')
-from_poi_to_this_person_NaN = PercentNaN(df,'from_poi_to_this_person')
-from_this_person_to_poi_NaN = PercentNaN(df,'from_this_person_to_poi')
-shared_receipt_with_poi_NaN = PercentNaN(df,'shared_receipt_with_poi')
-to_messages_NaN = PercentNaN(df,'to_messages')
-perc_from_poi_NaN = PercentNaN(df,'perc_from_poi')
-perc_to_poi_NaN = PercentNaN(df,'perc_to_poi')
+display_NaN(df)
 
 # Missing values : do not include these features
 df.drop("loan_advances", axis=1,inplace=True)
@@ -342,32 +235,7 @@ df.drop("deferral_payments",axis=1,inplace=True)
 df.columns.values
 
 # heatmap
-# Plot the Pearson's Correlation Diagram: 
-#df = df.drop(['name'], axis=1,inplace=False)
-df2 = df[['bonus',
-                'deferred_income',
-                'exercised_stock_options',
-                'expenses',
-                'long_term_incentive',
-                'other',
-                'restricted_stock',
-                'salary',
-                'total_payments',
-                'total_stock_value',
-                'from_messages',
-                'from_poi_to_this_person',
-                'from_this_person_to_poi',
-                'shared_receipt_with_poi',
-                'to_messages',
-                'perc_from_poi',
-                'perc_to_poi']]
-colormap = plt.cm.viridis
-plt.figure(figsize=(12,12))
-plt.title("Pearson's Correlation of Features", y=1.05, size=15)
-sns.heatmap(df2.astype(float).corr(),linewidths=0.1,vmax=1.0, square=True,
-            cmap=colormap, linecolor='white', annot=True)
-plt.savefig('PearsonCorrelationOfFeatures.png')
-plt.show()
+plot_heatmap(df)
 
 print "\ndata description:\n",df.describe()
 
@@ -419,37 +287,14 @@ corr_matrix["poi"].sort_values(ascending=False)
 # Prepare the data for Machine Learning algorithms
 # Select features
 ### Selection of features and use of SelectKBest
-from sklearn.feature_selection import SelectKBest
-
-def Select_k_best(data_dict, features_list, k):
-    data_array = featureFormat(data_dict, features_list)
-    labels, features = targetFeatureSplit(data_array)
-
-    k_best = SelectKBest(k=k)
-    k_best.fit(features, labels)
-    scores = k_best.scores_
-    tuples = zip(features_list[1:], scores)
-    k_best_features = sorted(tuples, key=lambda x: x[1], reverse=True)
-
-
-    return k_best_features[:k]
+#from sklearn.feature_selection import SelectKBest
 
 myList = Select_k_best(data_dict,features_list,13)
 print "list of features",myList
 
 # save the names and their respective scores separately
 # reverse the tuples to go from most frequent to least frequent 
-feat = zip(*myList)[0]
-score = zip(*myList)[1]
-x_pos = np.arange(len(feat)) 
-
-# calculate slope and intercept for the linear trend line
-slope, intercept = np.polyfit(x_pos, score, 1)
-plt.bar(x_pos, score,align='center')
-plt.xticks(x_pos, feat,rotation=90) 
-plt.ylabel('Importance Score')
-plt.savefig('FeatureImportance.png')
-plt.show()
+plot_kbest(myList)
 
 # select best features from kbest
 features_list = ['poi',
