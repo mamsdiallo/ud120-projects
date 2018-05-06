@@ -191,7 +191,7 @@ corr_matrix["poi"].sort_values(ascending=False)
 ### Selection of features and use of SelectKBest
 #from sklearn.feature_selection import SelectKBest
 
-myList = Select_k_best(data_dict,features_list,13)
+myList = Select_k_best(data_dict,features_list,17)
 print "list of features",myList
 
 # save the names and their respective scores separately

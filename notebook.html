@@ -12591,7 +12591,7 @@ Name: poi, dtype: int64</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>TODO EXplanation</p>
+<p>I'll also do feature selection using percentile and k-best algorithms, I want to see the top 9 features these algorithms will select</p>
 
 </div>
 </div>
@@ -12605,20 +12605,6 @@ Name: poi, dtype: int64</p>
 
 </div>
 </div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Selection of features and use of SelectKBest</span>
-<span class="n">myList</span> <span class="o">=</span> <span class="n">Select_k_best</span><span class="p">(</span><span class="n">data_dict</span><span class="p">,</span><span class="n">features_list</span><span class="p">,</span><span class="mi">13</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -12648,7 +12634,7 @@ Name: poi, dtype: int64</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># to make this notebook&#39;s output identical at every run</span>
@@ -12662,7 +12648,7 @@ Name: poi, dtype: int64</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># select best features and getting rid of correlated features: 13 are remaining in total</span>
@@ -12689,7 +12675,7 @@ Name: poi, dtype: int64</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1">### Store to my_dataset for easy export below.</span>
@@ -12703,7 +12689,7 @@ Name: poi, dtype: int64</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1">### Extract features and labels from dataset for local testing</span>
@@ -12718,7 +12704,7 @@ Name: poi, dtype: int64</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1">### split data into training and testing datasets</span>
@@ -12878,14 +12864,95 @@ For more info:
 <p>I selected F1 for performance scoring since it is a good balance between Recall and Precision.</p>
 <p>When tuning with one algorithm fails, there is an option to switch to other algorithms.</p>
 <p><strong>Naive Bayes tuning:</strong>
-No hyperparameter tuning: The algorithm does not allow algorithm parameter tuning. To improve the performance, we can only play with the dataset - get more data - and the number of features. I did play with the number of features. I finally selected one feature.</p>
+No hyperparameter tuning: The algorithm does not allow algorithm parameter tuning. To improve the performance, we can only play with the dataset - get more data - and the number of features. I did play with the number of features. I finally selected one feature: exercised_stock_options.</p>
+<p>The process followed is:</p>
+<ol>
+<li>set the feature list with the unique feature</li>
+<li>Instantiate the Naive Bayes model</li>
+<li>Train the Naive Bayes model with the training data</li>
+<li>Evaluation on the final Naive Bayes model</li>
+</ol>
+<p>GaussianNB(priors=None)
+    Accuracy: 0.90409    Precision: 0.46055    Recall: 0.32100    F1: 0.37831    F2: 0.34171
+    Total predictions: 11000    True positives:  321    False positives:  376    False negatives:  679    True negatives: 9624</p>
 <p><strong>Decision Tree tuning:</strong>
 Random Forest algorithm has a lot of hyperparameters and I decided to use the following ones: 
-'criterion','max_depth','min_samples_split','max_features'. I also tried a smaller set of features to improve further the performance. The selection of the final features used the feature importances of the previous run Decision Tree model.</p>
+'criterion','max_depth','min_samples_split','max_features'. I also tried a smaller set of features to improve further the performance. The selection of the final features used the feature importances of the previous run Decision Tree model. 
+Features giving the best results: 'exercised_stock_options','salary','perc_to_poi','deferred_income','total_payments','shared_receipt_with_poi','expenses','from_poi_to_this_person','from_this_person_to_poi'</p>
+<p>The process followed is:</p>
+<ol>
+<li>set the feature list with the list here above</li>
+<li>Tuning with the following hyperparameters: criterion, max_depth, min_samples_split, max_features</li>
+<li>Use of GridSearchCV and F1 as scoring</li>
+<li>reuse of best estimator</li>
+<li>Evaluation on the final Decision Tree model</li>
+</ol>
 <p><strong>Random Forest tuning:</strong>
-Random Forest algorithm has a wealth of hyperparameters and I decided to use the following ones: 'criterion','n_estimators','max_depth','max_features'. I also tried a smaller set of features to improve further the performance. The selection of the final features used the feature importances from the previous run of Random Forest.</p>
+Random Forest algorithm has a wealth of hyperparameters and I decided to use the following ones: 'criterion','n_estimators','max_depth','max_features'. I also tried a smaller set of features to improve further the performance. The selection of the final features used the feature importances from the previous run of Random Forest. I finally selected two features: 'exercised_stock_options','bonus'</p>
+<p>The process followed is:</p>
+<ol>
+<li>set the feature list with the list here above</li>
+<li>Tuning with the following hyperparameters: criterion, n_estimators, max_depth, max_features</li>
+<li>Use of GridSearchCV and F1 as scoring</li>
+<li>reuse of best estimator</li>
+<li>Evaluation on the final Random Forest model</li>
+</ol>
 <p><strong>Adaboost tuning:</strong>
-Adaboost algorithm has a wealth of hyperparameters and I decided to use the following ones:'n_estimators','algorithm','learning_rate'. I also tried a smaller set of features to improve further the performance. The selection of the final features used the feature importances from previous run of Adaboost</p>
+Adaboost algorithm has a wealth of hyperparameters and I decided to use the following ones:'n_estimators','algorithm','learning_rate'. I also tried a smaller set of features to improve further the performance. The selection of the final features used the feature importances from previous run of Adaboost.
+Final features giving the best results: 'exercised_stock_options','perc_to_poi','long_term_incentive','total_payments','shared_receipt_with_poi','expenses','from_this_person_to_poi'</p>
+<p>The process followed is:</p>
+<ol>
+<li>set the feature list with the list here above</li>
+<li>Tuning with the following hyperparameters: n_estimators,algorithm,learning_rate</li>
+<li>Use of GridSearchCV and F1 as scoring</li>
+<li>reuse of best estimator</li>
+<li>Evaluation on the final adaboost model</li>
+</ol>
+<table>
+<thead><tr>
+<th>Algorithm</th>
+<th>Accuracy</th>
+<th>Precision</th>
+<th>Recall</th>
+<th>F1</th>
+<th>pass/fail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Naive Bayes</td>
+<td>0.90409</td>
+<td>0.46055</td>
+<td>0.32100</td>
+<td>0.3783</td>
+<td>passed</td>
+</tr>
+<tr>
+<td>Decision Tree</td>
+<td>0.83993</td>
+<td>0.41938</td>
+<td>0.52150</td>
+<td>0.46490</td>
+<td>passed</td>
+</tr>
+<tr>
+<td>Random Forest</td>
+<td>0.81754</td>
+<td>0.40663</td>
+<td>0.40500</td>
+<td>0.40581</td>
+<td>passed</td>
+</tr>
+<tr>
+<td>AdaBoost</td>
+<td>0.87213</td>
+<td>0.51576</td>
+<td>0.67100</td>
+<td>0.58322</td>
+<td>passed </td>
+</tr>
+</tbody>
+</table>
 
 </div>
 </div>
@@ -12895,368 +12962,9 @@ Adaboost algorithm has a wealth of hyperparameters and I decided to use the foll
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="NaiveBayes-Model">NaiveBayes Model<a class="anchor-link" href="#NaiveBayes-Model">&#182;</a></h3>
+<h4 id="DecisionTreeClassifier-visualization">DecisionTreeClassifier visualization<a class="anchor-link" href="#DecisionTreeClassifier-visualization">&#182;</a></h4>
 </div>
 </div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># select One feature only: better performance when reducing the number of features</span>
-<span class="n">features_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;poi&#39;</span><span class="p">,</span><span class="s1">&#39;exercised_stock_options&#39;</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">### Naive Bayes for prediction</span>
-<span class="kn">from</span> <span class="nn">sklearn.naive_bayes</span> <span class="kn">import</span> <span class="n">GaussianNB</span>
-
-<span class="c1"># Instantiate the Naive Bayes model</span>
-<span class="n">nb_clf</span> <span class="o">=</span> <span class="n">GaussianNB</span><span class="p">()</span>
-
-<span class="c1"># Train the Naive Bayes model with the training data</span>
-<span class="n">nb_clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[16]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>GaussianNB(priors=None)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">## Evaluation on the final model</span>
-<span class="n">test_classifier</span><span class="p">(</span><span class="n">nb_clf</span><span class="p">,</span> <span class="n">my_dataset</span><span class="p">,</span> <span class="n">features_list</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>GaussianNB(priors=None)
-	Accuracy: 0.90409	Precision: 0.46055	Recall: 0.32100	F1: 0.37831	F2: 0.34171
-	Total predictions: 11000	True positives:  321	False positives:  376	False negatives:  679	True negatives: 9624
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="DecisionTreeClassifier">DecisionTreeClassifier<a class="anchor-link" href="#DecisionTreeClassifier">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># select the 9 most important features from last run of DecisionTreeClassifier</span>
-<span class="c1"># Use of feature importances</span>
-<span class="n">features_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;poi&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;exercised_stock_options&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;salary&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;perc_to_poi&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;deferred_income&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;total_payments&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;shared_receipt_with_poi&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;expenses&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;from_poi_to_this_person&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;from_this_person_to_poi&#39;</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Tuning with the following hyperparameters: </span>
-<span class="c1"># criterion, max_depth, min_samples_split, max_features </span>
-<span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;criterion&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;entropy&quot;</span><span class="p">],</span>
-              <span class="s1">&#39;max_depth&#39;</span><span class="p">:[</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span>
-              <span class="s1">&#39;min_samples_split&#39;</span><span class="p">:[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span>
-              <span class="s1">&#39;max_features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">],</span>
-              <span class="s1">&#39;random_state&#39;</span><span class="p">:[</span><span class="mi">42</span><span class="p">]}</span>
-
-<span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="kn">import</span> <span class="n">DecisionTreeClassifier</span>
-
-<span class="c1"># Instantiate the Decision Tree model</span>
-<span class="n">DTree_clf</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">()</span>
-<span class="c1">#  F1 as scoring since the recall and the precision are equally important.</span>
-<span class="n">grid_search</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">DTree_clf</span><span class="p">,</span> <span class="n">param_grid</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;f1&#39;</span><span class="p">)</span>
-<span class="n">grid_search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Fitting 10 folds for each of 108 candidates, totalling 1080 fits
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>C:\Users\Diallo\Anaconda2\envs\DAND\lib\site-packages\sklearn\metrics\classification.py:1135: UndefinedMetricWarning: F-score is ill-defined and being set to 0.0 due to no predicted samples.
-  &#39;precision&#39;, &#39;predicted&#39;, average, warn_for)
-[Parallel(n_jobs=1)]: Done 1080 out of 1080 | elapsed:    4.0s finished
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt output_prompt">Out[19]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>GridSearchCV(cv=10, error_score=&#39;raise&#39;,
-       estimator=DecisionTreeClassifier(class_weight=None, criterion=&#39;gini&#39;, max_depth=None,
-            max_features=None, max_leaf_nodes=None,
-            min_impurity_decrease=0.0, min_impurity_split=None,
-            min_samples_leaf=1, min_samples_split=2,
-            min_weight_fraction_leaf=0.0, presort=False, random_state=None,
-            splitter=&#39;best&#39;),
-       fit_params=None, iid=True, n_jobs=1,
-       param_grid={&#39;min_samples_split&#39;: [2, 3, 4, 5], &#39;max_features&#39;: [1, 2, 3, 4, 5, 6, 7, 8, 9], &#39;random_state&#39;: [42], &#39;criterion&#39;: [&#39;entropy&#39;], &#39;max_depth&#39;: [2, 5, 10]},
-       pre_dispatch=&#39;2*n_jobs&#39;, refit=True, return_train_score=True,
-       scoring=&#39;f1&#39;, verbose=1)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Best hyperparameters</span>
-<span class="n">grid_search</span><span class="o">.</span><span class="n">best_params_</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[20]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>{&#39;criterion&#39;: &#39;entropy&#39;,
- &#39;max_depth&#39;: 2,
- &#39;max_features&#39;: 8,
- &#39;min_samples_split&#39;: 2,
- &#39;random_state&#39;: 42}</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Best Estimator</span>
-<span class="n">DTree_clf</span> <span class="o">=</span> <span class="n">grid_search</span><span class="o">.</span><span class="n">best_estimator_</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">grid_search</span><span class="o">.</span><span class="n">best_score_</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[22]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>0.60341207349081361</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># reuse of best estimator</span>
-<span class="n">DTree_clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[23]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>DecisionTreeClassifier(class_weight=None, criterion=&#39;entropy&#39;, max_depth=2,
-            max_features=8, max_leaf_nodes=None, min_impurity_decrease=0.0,
-            min_impurity_split=None, min_samples_leaf=1,
-            min_samples_split=2, min_weight_fraction_leaf=0.0,
-            presort=False, random_state=42, splitter=&#39;best&#39;)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">## Evaluation on the final model</span>
-<span class="n">test_classifier</span><span class="p">(</span><span class="n">DTree_clf</span><span class="p">,</span> <span class="n">my_dataset</span><span class="p">,</span> <span class="n">features_list</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>DecisionTreeClassifier(class_weight=None, criterion=&#39;entropy&#39;, max_depth=2,
-            max_features=8, max_leaf_nodes=None, min_impurity_decrease=0.0,
-            min_impurity_split=None, min_samples_leaf=1,
-            min_samples_split=2, min_weight_fraction_leaf=0.0,
-            presort=False, random_state=42, splitter=&#39;best&#39;)
-	Accuracy: 0.83993	Precision: 0.41938	Recall: 0.52150	F1: 0.46490	F2: 0.49728
-	Total predictions: 15000	True positives: 1043	False positives: 1444	False negatives:  957	True negatives: 11556
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span> <span class="s2">&quot;Feature importances:&quot;</span><span class="p">,</span><span class="n">DTree_clf</span><span class="o">.</span><span class="n">feature_importances_</span>
-<span class="k">print</span> <span class="s2">&quot;The number of classes &quot;</span><span class="p">,</span><span class="n">DTree_clf</span><span class="o">.</span><span class="n">n_classes_</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Feature importances: [ 0.          0.          0.40274157  0.          0.          0.
-  0.59725843  0.          0.        ]
-The number of classes  2
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -13267,452 +12975,6 @@ The number of classes  2
 
 </div>
 </div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="RandomForestClassifier">RandomForestClassifier<a class="anchor-link" href="#RandomForestClassifier">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Select the most important features from last run of Random Forest</span>
-<span class="c1"># reducing the number of features from 9 to 2 since the performance was not sifficient</span>
-<span class="c1"># selecting feature &#39;bonus&#39; instead of &#39;perc_to_poi&#39; for better performance </span>
-<span class="n">features_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;poi&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;exercised_stock_options&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;bonus&#39;</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Tuning with the following hyperparameters: </span>
-<span class="c1"># criterion, n_estimators, max_depth, max_features </span>
-<span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;criterion&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;gini&quot;</span><span class="p">,</span> <span class="s2">&quot;entropy&quot;</span><span class="p">],</span>
-              <span class="s1">&#39;n_estimators&#39;</span><span class="p">:[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span>
-              <span class="s1">&#39;max_depth&#39;</span><span class="p">:[</span><span class="bp">None</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">],</span>
-              <span class="s1">&#39;max_features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="bp">None</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>
-              <span class="s1">&#39;random_state&#39;</span><span class="p">:[</span><span class="mi">42</span><span class="p">]}</span>
-
-<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
-
-<span class="c1"># Instantiate the Random Forest model</span>
-<span class="n">RF_clf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">()</span>
-
-<span class="c1">#  F1 as scoring since the recall and the precision are equally important.</span>
-<span class="n">grid_search</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">RF_clf</span><span class="p">,</span> <span class="n">param_grid</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;f1&#39;</span><span class="p">)</span>
-<span class="n">grid_search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Fitting 10 folds for each of 96 candidates, totalling 960 fits
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>[Parallel(n_jobs=1)]: Done 960 out of 960 | elapsed:   23.5s finished
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt output_prompt">Out[27]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>GridSearchCV(cv=10, error_score=&#39;raise&#39;,
-       estimator=RandomForestClassifier(bootstrap=True, class_weight=None, criterion=&#39;gini&#39;,
-            max_depth=None, max_features=&#39;auto&#39;, max_leaf_nodes=None,
-            min_impurity_decrease=0.0, min_impurity_split=None,
-            min_samples_leaf=1, min_samples_split=2,
-            min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=1,
-            oob_score=False, random_state=None, verbose=0,
-            warm_start=False),
-       fit_params=None, iid=True, n_jobs=1,
-       param_grid={&#39;n_estimators&#39;: [2, 3, 4, 5], &#39;max_features&#39;: [None, 1, 2], &#39;random_state&#39;: [42], &#39;criterion&#39;: [&#39;gini&#39;, &#39;entropy&#39;], &#39;max_depth&#39;: [None, 5, 10, 15]},
-       pre_dispatch=&#39;2*n_jobs&#39;, refit=True, return_train_score=True,
-       scoring=&#39;f1&#39;, verbose=1)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Best hyperparameters</span>
-<span class="n">grid_search</span><span class="o">.</span><span class="n">best_params_</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[28]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>{&#39;criterion&#39;: &#39;gini&#39;,
- &#39;max_depth&#39;: None,
- &#39;max_features&#39;: None,
- &#39;n_estimators&#39;: 3,
- &#39;random_state&#39;: 42}</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Best estimator</span>
-<span class="n">RF_clf</span> <span class="o">=</span> <span class="n">grid_search</span><span class="o">.</span><span class="n">best_estimator_</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[30]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">grid_search</span><span class="o">.</span><span class="n">best_score_</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[30]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>0.48477690288713909</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[31]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Reuse of the best estimator</span>
-<span class="n">RF_clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[31]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>RandomForestClassifier(bootstrap=True, class_weight=None, criterion=&#39;gini&#39;,
-            max_depth=None, max_features=None, max_leaf_nodes=None,
-            min_impurity_decrease=0.0, min_impurity_split=None,
-            min_samples_leaf=1, min_samples_split=2,
-            min_weight_fraction_leaf=0.0, n_estimators=3, n_jobs=1,
-            oob_score=False, random_state=42, verbose=0, warm_start=False)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[32]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">## Evaluation on the final model</span>
-<span class="n">test_classifier</span><span class="p">(</span><span class="n">RF_clf</span><span class="p">,</span> <span class="n">my_dataset</span><span class="p">,</span> <span class="n">features_list</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>RandomForestClassifier(bootstrap=True, class_weight=None, criterion=&#39;gini&#39;,
-            max_depth=None, max_features=None, max_leaf_nodes=None,
-            min_impurity_decrease=0.0, min_impurity_split=None,
-            min_samples_leaf=1, min_samples_split=2,
-            min_weight_fraction_leaf=0.0, n_estimators=3, n_jobs=1,
-            oob_score=False, random_state=42, verbose=0, warm_start=False)
-	Accuracy: 0.81754	Precision: 0.40663	Recall: 0.40500	F1: 0.40581	F2: 0.40532
-	Total predictions: 13000	True positives:  810	False positives: 1182	False negatives: 1190	True negatives: 9818
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Adaboost-Model">Adaboost Model<a class="anchor-link" href="#Adaboost-Model">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[33]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># select best features and using feature importance from last run of Adaboost </span>
-<span class="n">features_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;poi&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;exercised_stock_options&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;perc_to_poi&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;long_term_incentive&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;total_payments&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;shared_receipt_with_poi&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;expenses&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;from_this_person_to_poi&#39;</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[34]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Tuning with the following hyperparameters: </span>
-<span class="c1"># n_estimators, algorithm, learning_rage </span>
-<span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;n_estimators&#39;</span><span class="p">:[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span>
-              <span class="s1">&#39;algorithm&#39;</span><span class="p">:[</span><span class="s1">&#39;SAMME&#39;</span><span class="p">],</span>
-              <span class="s1">&#39;learning_rate&#39;</span><span class="p">:[</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>
-              <span class="s1">&#39;random_state&#39;</span><span class="p">:[</span><span class="mi">42</span><span class="p">]}</span>
-
-<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">AdaBoostClassifier</span>
-
-<span class="c1"># Instantiate the Adaboost model</span>
-<span class="n">Aboost_clf</span> <span class="o">=</span> <span class="n">AdaBoostClassifier</span><span class="p">()</span>
-<span class="c1">#  F1 as scoring since the recall and the precision are equally important.</span>
-<span class="n">grid_search</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">Aboost_clf</span><span class="p">,</span> <span class="n">param_grid</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;f1&#39;</span><span class="p">)</span>
-<span class="n">grid_search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Fitting 10 folds for each of 15 candidates, totalling 150 fits
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>[Parallel(n_jobs=1)]: Done 150 out of 150 | elapsed:    4.2s finished
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt output_prompt">Out[34]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>GridSearchCV(cv=10, error_score=&#39;raise&#39;,
-       estimator=AdaBoostClassifier(algorithm=&#39;SAMME.R&#39;, base_estimator=None,
-          learning_rate=1.0, n_estimators=50, random_state=None),
-       fit_params=None, iid=True, n_jobs=1,
-       param_grid={&#39;n_estimators&#39;: [2, 3, 4, 5, 10], &#39;learning_rate&#39;: [0.5, 1, 2], &#39;random_state&#39;: [42], &#39;algorithm&#39;: [&#39;SAMME&#39;]},
-       pre_dispatch=&#39;2*n_jobs&#39;, refit=True, return_train_score=True,
-       scoring=&#39;f1&#39;, verbose=1)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[35]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Best hyperparameters </span>
-<span class="n">grid_search</span><span class="o">.</span><span class="n">best_params_</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[35]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>{&#39;algorithm&#39;: &#39;SAMME&#39;,
- &#39;learning_rate&#39;: 1,
- &#39;n_estimators&#39;: 3,
- &#39;random_state&#39;: 42}</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[36]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Best estimator</span>
-<span class="n">clf</span> <span class="o">=</span> <span class="n">grid_search</span><span class="o">.</span><span class="n">best_estimator_</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[37]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># reuse of the best estimator</span>
-<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features_train</span><span class="p">,</span><span class="n">labels_train</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[37]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>AdaBoostClassifier(algorithm=&#39;SAMME&#39;, base_estimator=None, learning_rate=1,
-          n_estimators=3, random_state=42)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[38]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">## Evaluation on the final model</span>
-<span class="n">test_classifier</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="n">my_dataset</span><span class="p">,</span> <span class="n">features_list</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>AdaBoostClassifier(algorithm=&#39;SAMME&#39;, base_estimator=None, learning_rate=1,
-          n_estimators=3, random_state=42)
-	Accuracy: 0.87213	Precision: 0.51576	Recall: 0.67100	F1: 0.58322	F2: 0.63290
-	Total predictions: 15000	True positives: 1342	False positives: 1260	False negatives:  658	True negatives: 11740
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
