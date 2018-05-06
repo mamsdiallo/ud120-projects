@@ -12863,8 +12863,11 @@ For more info:
 <p>It is important to fine-tune the model since we want the best performance (e.g. minimal errors, best accuracy, best precision, and so on).</p>
 <p>I selected F1 for performance scoring since it is a good balance between Recall and Precision.</p>
 <p>When tuning with one algorithm fails, there is an option to switch to other algorithms.</p>
-<p><strong>Naive Bayes tuning:</strong>
-No hyperparameter tuning: The algorithm does not allow algorithm parameter tuning. To improve the performance, we can only play with the dataset - get more data - and the number of features. I did play with the number of features. I finally selected one feature: exercised_stock_options.</p>
+<p><strong>Naive Bayes tuning:</strong></p>
+<p>There is no hyperparameter tuning since the algorithm does not allow algorithm parameter tuning.</p>
+<p>To improve the performance, we can only play with the dataset - get more data - and the number of features.</p>
+<p>I did play with the number of features.</p>
+<p>I finally selected one feature: exercised_stock_options.</p>
 <p>The process followed is:</p>
 <ol>
 <li>set the feature list with the unique feature</li>
@@ -12872,13 +12875,11 @@ No hyperparameter tuning: The algorithm does not allow algorithm parameter tunin
 <li>Train the Naive Bayes model with the training data</li>
 <li>Evaluation on the final Naive Bayes model</li>
 </ol>
-<p>GaussianNB(priors=None)
-    Accuracy: 0.90409    Precision: 0.46055    Recall: 0.32100    F1: 0.37831    F2: 0.34171
-    Total predictions: 11000    True positives:  321    False positives:  376    False negatives:  679    True negatives: 9624</p>
-<p><strong>Decision Tree tuning:</strong>
-Random Forest algorithm has a lot of hyperparameters and I decided to use the following ones: 
-'criterion','max_depth','min_samples_split','max_features'. I also tried a smaller set of features to improve further the performance. The selection of the final features used the feature importances of the previous run Decision Tree model. 
-Features giving the best results: 'exercised_stock_options','salary','perc_to_poi','deferred_income','total_payments','shared_receipt_with_poi','expenses','from_poi_to_this_person','from_this_person_to_poi'</p>
+<p><strong>Decision Tree tuning:</strong></p>
+<p>Random Forest algorithm has a lot of hyperparameters and I decided to use the following ones: 
+'criterion','max_depth','min_samples_split','max_features'.</p>
+<p>I also tried a smaller set of features to improve further the performance. The selection of the final features used the feature importances of the previous run Decision Tree model.</p>
+<p>Features giving the best results: 'exercised_stock_options','salary','perc_to_poi','deferred_income','total_payments','shared_receipt_with_poi','expenses','from_poi_to_this_person','from_this_person_to_poi'</p>
 <p>The process followed is:</p>
 <ol>
 <li>set the feature list with the list here above</li>
@@ -12887,8 +12888,10 @@ Features giving the best results: 'exercised_stock_options','salary','perc_to_po
 <li>reuse of best estimator</li>
 <li>Evaluation on the final Decision Tree model</li>
 </ol>
-<p><strong>Random Forest tuning:</strong>
-Random Forest algorithm has a wealth of hyperparameters and I decided to use the following ones: 'criterion','n_estimators','max_depth','max_features'. I also tried a smaller set of features to improve further the performance. The selection of the final features used the feature importances from the previous run of Random Forest. I finally selected two features: 'exercised_stock_options','bonus'</p>
+<p><strong>Random Forest tuning:</strong></p>
+<p>Random Forest algorithm has a wealth of hyperparameters and I decided to use the following ones: 'criterion','n_estimators','max_depth','max_features'.</p>
+<p>I also tried a smaller set of features to improve further the performance. The selection of the final features used the feature importances from the previous run of Random Forest.</p>
+<p>I finally selected two features: 'exercised_stock_options','bonus'</p>
 <p>The process followed is:</p>
 <ol>
 <li>set the feature list with the list here above</li>
@@ -12897,9 +12900,10 @@ Random Forest algorithm has a wealth of hyperparameters and I decided to use the
 <li>reuse of best estimator</li>
 <li>Evaluation on the final Random Forest model</li>
 </ol>
-<p><strong>Adaboost tuning:</strong>
-Adaboost algorithm has a wealth of hyperparameters and I decided to use the following ones:'n_estimators','algorithm','learning_rate'. I also tried a smaller set of features to improve further the performance. The selection of the final features used the feature importances from previous run of Adaboost.
-Final features giving the best results: 'exercised_stock_options','perc_to_poi','long_term_incentive','total_payments','shared_receipt_with_poi','expenses','from_this_person_to_poi'</p>
+<p><strong>Adaboost tuning:</strong></p>
+<p>Adaboost algorithm has a wealth of hyperparameters and I decided to use the following ones:'n_estimators','algorithm','learning_rate'.</p>
+<p>I also tried a smaller set of features to improve further the performance. The selection of the final features used the feature importances from previous run of Adaboost.</p>
+<p>Final features giving the best results: 'exercised_stock_options','perc_to_poi','long_term_incentive','total_payments','shared_receipt_with_poi','expenses','from_this_person_to_poi'</p>
 <p>The process followed is:</p>
 <ol>
 <li>set the feature list with the list here above</li>
