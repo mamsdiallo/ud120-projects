@@ -37,7 +37,10 @@ def plot_heatmap(df):
     plt.title("Pearson's Correlation of Features", y=1.05, size=15)
     sns.heatmap(df2.astype(float).corr(),linewidths=0.1,vmax=1.0, square=True,
                 cmap=colormap, linecolor='white', annot=True)
-    plt.savefig('PearsonCorrelationOfFeatures.png')
+    fig = plt.gcf()
+    fig.set_size_inches(18.5, 10.5)
+    fig.savefig('PearsonCorrelationOfFeatures.png', dpi=100)    
+    #plt.savefig('PearsonCorrelationOfFeatures.png')
     plt.show()
     
 def plot_kbest(myList):
@@ -45,13 +48,32 @@ def plot_kbest(myList):
     # reverse the tuples to go from most frequent to least frequent 
     feat = zip(*myList)[0]
     score = zip(*myList)[1]
-    x_pos = np.arange(len(feat)) 
+    y_pos = np.arange(len(feat)) 
     
     # calculate slope and intercept for the linear trend line
-    slope, intercept = np.polyfit(x_pos, score, 1)
-    plt.bar(x_pos, score,align='center')
-    plt.xticks(x_pos, feat,rotation=90) 
-    plt.ylabel('Importance Score')
-    plt.savefig('FeatureImportance.png')
+    #slope, intercept = np.polyfit(x_pos, score, 1)
+    plt.barh(y_pos,score, align='center')
+    #plt.yticks(y_pos, feat,rotation=90) 
+    plt.yticks(y_pos, feat) 
+    plt.xlabel('Importance Score')
+    fig = plt.gcf()
+    fig.set_size_inches(18.5, 10.5)
+    fig.savefig('FeatureImportance.png', dpi=100)    
+    
+#    plt.savefig('FeatureImportance.png')
+    plt.show()
+              
+        
+def plotBonusvsSalary(df):
+    sns.jointplot(x="bonus", y="salary", data=df)
+    fig = plt.gcf()
+    fig.set_size_inches(18.5, 10.5)
+    fig.savefig('bonusVSsalary.png', dpi=100)    
+    #plt.savefig('bonusVSsalary.png')
+    plt.show()
+   
+def plotPerc_from_poivsPerc_to_poi(df):    
+    sns.jointplot(x="perc_from_poi", y="perc_to_poi", data=df)
+    plt.savefig('perc_from_poiVSperc_to_poi.png')
     plt.show()
     

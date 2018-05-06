@@ -8,6 +8,11 @@ Created on Sat May 05 12:54:50 2018
 # Select features
 from sklearn.feature_selection import SelectKBest
 from feature_format import featureFormat, targetFeatureSplit
+import matplotlib.pyplot as plt
+import seaborn as sns
+# Settings
+sns.set_style('whitegrid')
+plt.style.use('classic')
 
 def Select_k_best(data_dict, features_list, k):
     data_array = featureFormat(data_dict, features_list)
@@ -18,7 +23,6 @@ def Select_k_best(data_dict, features_list, k):
     scores = k_best.scores_
     tuples = zip(features_list[1:], scores)
     k_best_features = sorted(tuples, key=lambda x: x[1], reverse=True)
-
-
+     
     return k_best_features[:k]
 

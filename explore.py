@@ -9,9 +9,6 @@ Created on Sat May 05 11:15:31 2018
 import re 
 import pandas as pd
 
-# patterns: "TOTAL", "AGENCY"
-TOTAL = re.compile(r'TOTAL',re.IGNORECASE)
-AGENCY = re.compile(r'AGENCY',re.IGNORECASE)
 
 def get_incompletes(dataset, threshold):
     """
@@ -27,6 +24,7 @@ def get_incompletes(dataset, threshold):
         fraction = float(n) / float(21)
         if fraction > threshold:
             incompletes.append(person)
+            #print("{0:.2f}".format(fraction))
             print fraction*100.0," %"
 
     return incompletes
@@ -39,25 +37,25 @@ def display_info(dataset,pattern,feature):
             print "[",feature,"] = ",dataset[name][feature]
 
 def display_examples(data_dict):
-    # print SALARY for: TOTAL, AGENCY
-    # print poi for TOTAL
-    var = "poi"
-    display_info(data_dict,TOTAL,var)
-    # print bonus for: TOTAL
-    var = "bonus"
-    display_info(data_dict,TOTAL,var)
-    # print salary for: TOTAL
-    var = "salary"
-    display_info(data_dict,TOTAL,var)
-    # print poi for AGENCY
-    var = "poi"
-    display_info(data_dict,AGENCY,var)
-    # print bonus for AGENCY
-    var = "bonus"
-    display_info(data_dict,AGENCY,var)
-    # print salary for AGENCY
-    var = "salary"
-    display_info(data_dict,AGENCY,var)
+    # patterns: "TOTAL", "AGENCY"
+    TOTAL = re.compile(r'TOTAL',re.IGNORECASE)
+    AGENCY = re.compile(r'AGENCY',re.IGNORECASE)
+    WHALEY = re.compile(r'WHALEY',re.IGNORECASE)
+    WROBEL = re.compile(r'WROBEL',re.IGNORECASE)
+    LOCKHART = re.compile(r'LOCKHART',re.IGNORECASE)
+    GRAMM = re.compile(r'GRAMM WENDY L',re.IGNORECASE)
+    
+    names_list = [TOTAL,AGENCY,WHALEY,WROBEL,LOCKHART,GRAMM]
+    for name in names_list:
+        # print poi for name
+        var = "poi"
+        display_info(data_dict,name,var)
+        # print bonus for: name
+        var = "bonus"
+        display_info(data_dict,name,var)
+        # print salary for: name
+        var = "salary"
+        display_info(data_dict,name,var)
 
     # Let's catch the highest salary and highest bonus
     print "\nWho has the highest salary? "
@@ -145,10 +143,18 @@ def build_df(data_dict):
 def PercentNaN(df,feature):
     f_NaN = df[feature].isnull().sum()*100.0/df.shape[0]
     print "% of NaN values for ",feature,"{0:.2f}".format(f_NaN)
+    return f_NaN
+
+        
+def display_orderedNaN(df):
+    feat_list = list(df.columns.values)
+    perc = []
+    for title in feat_list:
+        p = PercentNaN(df,title)
+        perc.append(p)
+    tuples = zip(feat_list, perc)
+    ordered_NaN = sorted(tuples, key=lambda x: x[1], reverse=True)
+    return ordered_NaN
 
 
-# display NaN %    
-def display_NaN(df):
-    for title in df.columns:
-        PercentNaN(df,title)
         
